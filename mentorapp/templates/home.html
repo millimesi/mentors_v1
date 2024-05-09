@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h1>Light It Mentors</h1>
+    <h3>Support Your Child's Success: Find a Mentor Who Empowers Them</h3>
+    <section class="container">    
+        <p><img src="{{ url_for('static', filename='images/proffesor_mentoring.jpeg') }}" alt="Image">Watching your child navigate school, personal growth, and future dreams can be both exciting and nerve-wracking. We offer powerful support: mentorship. Our trained life coaches go beyond academics to help children conquer exams, school challenges, and unlock their full potential. Mentors provide personalized strategies, answer questions, and become trusted guides, helping your child thrive in all aspects of life. With a mentor by their side, your child can navigate challenges with confidence, build valuable skills, and achieve their goals. It's a win for them, and a win for your family.</p>
+    </section>
+    <h3>Visit our Mentors page and find your perfect match today!</h3>
+    <div class="contain"><button type="button"><a href="{{ url_for('mentors') }}">Mentors</a></button></div>
+{% endblock content %}
+

@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2 class="mentorsh2">Light it mentors</h2>
+    {% for mentor in mentorslist %}
+        <div class="mentor_container">
+            <dt><h4><img src="{{ url_for('static', filename='images/profile_pics/' + mentor.photo) }}" alt="Image" style="width: 100px; height: 100px; border-radius: 50%; float: left; margin-left: 10px;">{{ mentor.name }} {{ mentor.father_name }}</h1></dt>
+            <dd>
+                <p><strong>Bio:</strong> <span>{{ mentor.Bio }}</span></p>
+                <p><strong>Experience:</strong> {{ mentor.experience }}</p>
+            </dd>
+        </div>
+    {% endfor%}
+{% endblock content %}

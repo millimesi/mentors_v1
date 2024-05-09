@@ -1,0 +1,76 @@
+body {
+    background-color: #fff9f0;
+    margin: 0;
+    font-family: cambria, Arial, sans-serif;
+}
+header {
+    background: url(../images/logo-no-background.png);
+    background-repeat: no-repeat;
+    background-size: 130px 100%;
+    background-position: 40px center;
+    height: 130px;
+    margin-top: 30px;
+}
+.nav_bar nav{
+    width: 40%;
+    position: relative;
+    left: 60%; 
+}
+.nav_bar ul{
+    overflow: hidden;
+    padding: 0;
+}
+.nav_bar li{
+    list-style-type: none;
+    float: left;
+    margin-left: 30pt;
+}
+.nav_bar a{
+    color: #161107;
+    font-size: 22pt;
+    text-decoration: none;
+}
+.nav_bar a:hover{
+    text-shadow: 4px 4px 8px #ddb400;
+}
+h1 {
+    text-align: center;
+    font-size: 36pt;
+}
+.container {
+    /* border: #161107 solid 2px; */
+    position: relative;
+    justify-content: flex-start;
+
+}
+.container p {
+    margin-left: 200px;
+    margin-top: 50px;
+    margin-bottom: 100px;
+    width: 70%;
+    font-size: 28px;
+
+}
+.container img {
+    float: right;
+    margin-right: 20px;
+    margin-left: 30px;
+    width: 350px;
+    height: 350px;
+    border: #161107 solid 4px;
+}
+h3 {
+    text-align: center;
+    font-size: 25pt;
+}
+.contain {
+    text-align: center;
+}
+.contain button {
+    font-size: 25pt;
+    border-color: #ddb400;
+    background-color: #ddb400;
+}
+.contain button:hover{
+    box-shadow: 4px 4px 8px #ddb400;
+}

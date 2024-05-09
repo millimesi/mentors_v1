@@ -1,0 +1,14 @@
+.mentorsh2 {
+    margin-left: -20%;
+    text-align: center;
+    font-size: 22pt;
+}
+.mentor_container {
+    margin-left: 20%;
+    width: 50%;
+    background-color: white;
+    /* border: black 2px solid; */
+}
+.mentor_container p{
+    font-size: 14pt;
+}

@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="register_container">
+        {% from "_formhelpers.html" import render_field %}
+        <form method=post>
+        <dl>
+            {{ render_field(form.email) }}
+            {{ render_field(form.password) }}
+            {{ render_field(form.remember) }}
+        </dl>
+        <p><input type=submit value=login>
+        </form>
+        <div class="Already">
+            <small>
+                <a href="#"> Forgot Password?</a>
+            </small>
+        </div>
+        <div class="Already">
+            <small>
+                Don't have an acount?<a href="{{ url_for('register')}}"> Register</a>
+            </small>
+        </div>
+    </div>
+{% endblock content %}
