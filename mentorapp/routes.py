@@ -1,7 +1,7 @@
 from flask import render_template, url_for, flash, redirect, get_flashed_messages, request
 from mentorapp import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-from mentorapp.forms import RegistrationForm, LoginForm
+from mentorapp.forms import RegistrationForm, LoginForm, UpdateUserAccount, StudentRegistration
 from mentorapp.models import User, Mentor, MentorRequest, Student
 from mentorapp.mentor_dic import mentorslist
 
@@ -68,8 +68,52 @@ def logout():
     logout_user()
     return redirect(url_for('home'))
 
-@app.route("/account")
+@app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', title='account')
+    updateAccount_form= UpdateUserAccount(request.form)
+    registerStudent_form= StudentRegistration(request.form)
+    if request.method == 'POST':
+        if updateAccount_form.validate():
+            current_user.name = updateAccount_form.name.data
+            current_user.father_name = updateAccount_form.father_name.data
+            current_user.grand_father_name = updateAccount_form.grand_father_name.data
+            current_user.email = updateAccount_form.email.data
+            current_user.phone_number = updateAccount_form.phone_number.data
+            current_user.user_type = updateAccount_form.user_type.data
+
+            # Create student table in database
+            student = Student(
+                name=registerStudent_form.name.data,
+                father_name=registerStudent_form.father_name.data,
+                grand_father_name=registerStudent_form.grand_father_name.data,
+                grade_level=registerStudent_form.grade_level.data,
+                phone_number=registerStudent_form.phone_number.data,
+                email=registerStudent_form.email.data
+            )
+            db.session.add(student)
+            db.session.commit()
+            flash(f"Account Updated successfully!", 'success')
+            return redirect(url_for('account'))
+    elif request.method == 'GET':
+        updateAccount_form.name.data = current_user.name
+        updateAccount_form.father_name.data = current_user.father_name
+        updateAccount_form.grand_father_name.data = current_user.grand_father_name
+        updateAccount_form.email.data = current_user.email
+        updateAccount_form.phone_number.data = current_user.phone_number
+        updateAccount_form.user_type.data = current_user.user_type
+        
+        # check if the user has students if there is display it
+        if current_user.user_type == 'parent':
+            student = Student.query.filter_by(user_id=current_user.id).first()
+            if student:
+                registerStudent_form.name.data = student.name
+                registerStudent_form.father_name.data = student.father_name.father_name
+                grand_father_name=registerStudent_form.grand_father_name.data = student.grand_father_name
+                registerStudent_form.grade_level.data = student.grade_level
+                registerStudent_form.phone_number.data = student.phone_number
+                registerStudent_form.email.data = student.email
+            else:
+                flash('Add Students') 
+    return render_template('account.html', title='account', update_form=updateAccount_form, Student_form=registerStudent_form)
 

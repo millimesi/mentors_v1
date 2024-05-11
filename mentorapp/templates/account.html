@@ -1,4 +1,48 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h3>{{ current_user.name }}</h3>
+<div class="register_container">
+    {% from "_formhelpers.html" import render_field %}
+    <h3>{{ current_user.name }} {{ current_user.father_name }} {{ current_user.user_type }}</h3>
+    {% if current_user.user_type == 'parent' %}
+        <h4>Update Account</h4>
+        <form method=post>
+            <dl>
+                {{ render_field(update_form.name) }}
+                {{ render_field(update_form.father_name) }}
+                {{ render_field(update_form.grand_father_name) }}
+                {{ render_field(update_form.email) }}
+                {{ render_field(update_form.phone_number) }}
+                {{ render_field(update_form.user_type) }}
+            </dl>
+            <p><input type=submit value=Update>
+        </form>
+        <h4>Register Student</h4>
+        <form method=post>
+            <dl>
+                {{ render_field(Student_form.name) }}
+                {{ render_field(Student_form.father_name) }}
+                {{ render_field(Student_form.grand_father_name) }}
+                {{ render_field(Student_form.grade_level) }}
+                {{ render_field(Student_form.email) }}
+                {{ render_field(Student_form.phone_number) }}
+                
+            </dl>
+            <p><input type=submit value=Register>
+        </form>
+    {% else %}
+        <form method=post>
+        <dl>
+            {{ render_field(update_form.name) }}
+            {{ render_field(update_form.father_name) }}
+            {{ render_field(update_form.grand_father_name) }}
+            {{ render_field(update_form.email) }}
+            {{ render_field(update_form.phone_number) }}
+            {{ render_field(update_form.user_type) }}
+        </dl>
+        <p><input type=submit value=Update>
+        </form>
+        <h4>Register Student</h4>
+    {% endif %}
+
+</div>
 {% endblock content %}
