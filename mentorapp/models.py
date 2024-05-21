@@ -48,7 +48,7 @@ class Mentor(BaseModel, db.Model):
     grand_father_name = db.Column(db.String(100), nullable=False)
     Bio = db.Column(db.Text)
     experience = db.Column(db.String(30))
-    photo = db.Column(db.String(100), nullable=False)
+    photo = db.Column(db.String(100), nullable=False, default='default.jpg')
     email = db.Column(db.String(100))
     phone_number = db.Column(db.String(14), nullable=False)
     password = db.Column(db.String(100), nullable=False)
@@ -65,6 +65,7 @@ class User(BaseModel, db.Model, UserMixin):
     phone_number = db.Column(db.String(14), nullable=False)
     password = db.Column(db.String(100), nullable=False)
     user_type = db.Column(db.Enum('Parent', 'student'))
+    students = db.relationship("Student", back_populates="user", cascade="all, delete, delete-orphan")
 
 class Student(BaseModel, db.Model):
     '''Student class'''
@@ -75,8 +76,7 @@ class Student(BaseModel, db.Model):
     grade_level = db.Column(db.Integer)
     phone_number = db.Column(db.String(14), nullable=False)
     user_id = db.Column(db.String(60), db.ForeignKey('users.id', ondelete='CASCADE'), nullable=False)
-    user = db.relationship(
-        "User", backref="student", cascade="all, delete, delete-orphan", single_parent=True)
+    user = db.relationship("User", back_populates="students")
 
 class MentorRequest(BaseModel, db.Model):
     __tablename__ = 'mentor_requests'

@@ -1,9 +1,11 @@
 from flask import render_template, url_for, flash, redirect, get_flashed_messages, request
 from mentorapp import app, db, bcrypt
 from flask_login import login_user, current_user, logout_user, login_required
-from mentorapp.forms import RegistrationForm, LoginForm, UpdateUserAccount, StudentRegistration
+from mentorapp.forms import MentorRegistration, RegistrationForm, LoginForm, UpdateUserAccount, StudentRegistration
 from mentorapp.models import User, Mentor, MentorRequest, Student
 from mentorapp.mentor_dic import mentorslist
+import secrets
+import os
 
 
 @app.route("/")
@@ -13,6 +15,7 @@ def home():
 
 @app.route("/mentors")
 def mentors():
+    # mentorslist = Mentor.query.all()
     return render_template('mentors.html', mentorslist=mentorslist, title='mentors')
 
 @app.route("/about")
@@ -71,49 +74,115 @@ def logout():
 @app.route("/account", methods=['GET', 'POST'])
 @login_required
 def account():
-    updateAccount_form= UpdateUserAccount(request.form)
-    registerStudent_form= StudentRegistration(request.form)
+    update_form= UpdateUserAccount(request.form)
+    Student_form= StudentRegistration(request.form)
     if request.method == 'POST':
-        if updateAccount_form.validate():
-            current_user.name = updateAccount_form.name.data
-            current_user.father_name = updateAccount_form.father_name.data
-            current_user.grand_father_name = updateAccount_form.grand_father_name.data
-            current_user.email = updateAccount_form.email.data
-            current_user.phone_number = updateAccount_form.phone_number.data
-            current_user.user_type = updateAccount_form.user_type.data
-
-            # Create student table in database
-            student = Student(
-                name=registerStudent_form.name.data,
-                father_name=registerStudent_form.father_name.data,
-                grand_father_name=registerStudent_form.grand_father_name.data,
-                grade_level=registerStudent_form.grade_level.data,
-                phone_number=registerStudent_form.phone_number.data,
-                email=registerStudent_form.email.data
-            )
-            db.session.add(student)
+        if update_form.validate():
+            current_user.name = update_form.name.data
+            current_user.father_name = update_form.father_name.data
+            current_user.grand_father_name = update_form.grand_father_name.data
+            current_user.email = update_form.email.data
+            current_user.phone_number = update_form.phone_number.data
+            current_user.user_type = update_form.user_type.data
             db.session.commit()
             flash(f"Account Updated successfully!", 'success')
             return redirect(url_for('account'))
     elif request.method == 'GET':
-        updateAccount_form.name.data = current_user.name
-        updateAccount_form.father_name.data = current_user.father_name
-        updateAccount_form.grand_father_name.data = current_user.grand_father_name
-        updateAccount_form.email.data = current_user.email
-        updateAccount_form.phone_number.data = current_user.phone_number
-        updateAccount_form.user_type.data = current_user.user_type
+        update_form.name.data = current_user.name
+        update_form.father_name.data = current_user.father_name
+        update_form.grand_father_name.data = current_user.grand_father_name
+        update_form.email.data = current_user.email
+        update_form.phone_number.data = current_user.phone_number
+        update_form.user_type.data = current_user.user_type
         
         # check if the user has students if there is display it
-        if current_user.user_type == 'parent':
-            student = Student.query.filter_by(user_id=current_user.id).first()
-            if student:
-                registerStudent_form.name.data = student.name
-                registerStudent_form.father_name.data = student.father_name.father_name
-                grand_father_name=registerStudent_form.grand_father_name.data = student.grand_father_name
-                registerStudent_form.grade_level.data = student.grade_level
-                registerStudent_form.phone_number.data = student.phone_number
-                registerStudent_form.email.data = student.email
-            else:
-                flash('Add Students') 
-    return render_template('account.html', title='account', update_form=updateAccount_form, Student_form=registerStudent_form)
+        student = Student.query.filter_by(user_id=current_user.id).all()
+    return render_template('account.html', title='account', update_form=update_form, Student_form=Student_form, student=student)
 
+
+@app.route("/register-student", methods=['GET', 'POST'])
+@login_required
+def register_Student():
+    Student_form= StudentRegistration(request.form)
+    if request.method == 'POST':
+        if Student_form.validate():
+            student = Student(
+                name=Student_form.name.data,
+                father_name=Student_form.father_name.data,
+                grand_father_name=Student_form.grand_father_name.data,
+                grade_level=Student_form.grade_level.data,
+                phone_number=Student_form.phone_number.data,
+                user_id= current_user.id
+            )
+            db.session.add(student)
+            db.session.commit()
+            flash(f"Student Registered successfully!", 'success')
+            return redirect(url_for('account'))
+    return render_template('rstudent.html', title='register-student', Student_form=Student_form)
+
+
+@app.route("/edit-student/<string:student_id>", methods=['GET', 'POST'])
+@login_required
+def edit_student(student_id):
+    Student_form= StudentRegistration(request.form)
+    student = Student.query.filter_by(id=student_id).first()
+    if request.method == 'GET':
+        Student_form.name.data = student.name
+        Student_form.father_name.data = student.father_name
+        Student_form.grand_father_name.data = student.grand_father_name
+        Student_form.grade_level.data = student.grade_level
+        Student_form.phone_number.data = student.phone_number
+    if request.method == 'POST':
+        if Student_form.validate():
+            student.name = Student_form.name.data
+            student.father_name = student.father_name
+            student.grand_father_name = Student_form.grand_father_name.data
+            student.grade_level = Student_form.grade_level.data
+            student.phone_number = Student_form.phone_number.data
+            db.session.commit()
+            return redirect(url_for('account'))
+    return render_template('rstudent.html', title='edit-student', Student_form=Student_form)
+
+
+@app.route("/delete-student/<string:student_id>", methods=['POST'])
+@login_required
+def delete_student(student_id):
+    student = Student.query.filter_by(id=student_id).first()
+    if student:
+        db.session.delete(student)
+        db.session.commit()
+        flash("Student is deleted successfully!", 'success')
+    else:
+        flash("Student not found!", 'error')
+    return redirect(url_for('account'))
+
+def save_pictures(form_photo):
+    random_hex = secrets.token_hex(8)
+    _, f_ext = os.path.splitext(form_photo.filename)
+    photo_fname = random_hex + f_ext
+    photo_path = os.path.join(app.root_path, 'static/images/profile_pics', photo_fname)
+    form_photo.save(photo_path)
+    return photo_fname
+
+@app.route("/register-mentor", methods=['GET', 'POST'])
+def register_mentor():
+    mentor_form= MentorRegistration()
+    if mentor_form.validate_on_submit():
+        mentor = Mentor(
+            name=mentor_form.name.data,
+            father_name=mentor_form.father_name.data,
+            grand_father_name=mentor_form.grand_father_name.data,
+            phone_number=mentor_form.phone_number.data,
+            Bio = mentor_form.Bio.data,
+            experience = mentor_form.experience.data,
+            photo = save_pictures(mentor_form.photo.data),
+            email = mentor_form.email.data,
+            password = bcrypt.generate_password_hash(mentor_form.password.data).decode('utf-8')
+        )
+        db.session.add(mentor)
+        db.session.commit()
+        flash(f"Registered as a Mentor successfully!", 'success')
+        return redirect(url_for('mentors'))
+    else:
+        print(mentor_form.errors)
+    return render_template('r_mentor.html', title='register-mentor', mentor_form=mentor_form)

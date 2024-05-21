@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="register_container">
+        {% from "_formhelpers.html" import render_field %}
+        <h2>Register as a Mentor</h2>
+        <form method=post action="" enctype="multipart/form-data">
+            {{ mentor_form.hidden_tag() }}
+            <dl>
+                {{ render_field(mentor_form.name) }}
+                {{ render_field(mentor_form.father_name) }}
+                {{ render_field(mentor_form.grand_father_name) }}
+                {{ render_field(mentor_form.email) }}
+                {{ render_field(mentor_form.phone_number) }}
+                {{ render_field(mentor_form.Bio) }}
+                {{ render_field(mentor_form.experience) }}
+                {{ mentor_form.photo.label }}<br>
+                {{ mentor_form.photo }}<br>
+                {% for error in mentor_form.photo.errors %}
+                    <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+                {{ render_field(mentor_form.password) }}
+                {{ render_field(mentor_form.confirm) }}
+            </dl>
+            <input type=submit value=Register>
+        </form>
+        <div class="Already">
+            <small>
+                Already Registered?<a href="#"> login</a>
+            </small>
+        </div>
+    </div>
+    
+{% endblock content %}

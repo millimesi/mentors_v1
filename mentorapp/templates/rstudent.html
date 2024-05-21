@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="register_container">
+        {% if title == 'edit-student' %}
+            <h2>Edit student profile</h2>
+        {% else %}
+            <h2>Register student</h2>
+        {% endif %}
+        {% from "_formhelpers.html" import render_field %}
+        <form method=post>
+            <dl>
+                {{ render_field(Student_form.name) }}
+                {{ render_field(Student_form.father_name) }}
+                {{ render_field(Student_form.grand_father_name) }}
+                {{ render_field(Student_form.grade_level) }}
+                {{ render_field(Student_form.phone_number) }}
+                
+            </dl>
+            {% if title == 'edit-student' %}
+                <input type=submit value=Update>
+            {% else %}
+                <input type=submit value=Register>
+            {% endif %}
+            
+        </form>
+    </div>
+{% endblock content %}

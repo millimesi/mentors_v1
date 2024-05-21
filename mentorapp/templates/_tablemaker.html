@@ -1,0 +1,24 @@
+{% macro render_table(student) %}
+    <table>
+        <tr>
+            <th>Name</th>
+            <th>father_name</th>
+            <th>grade_level</th>
+            <th>phone number</th>
+        
+        </tr>
+        {% for stud in student %}
+            <tr>
+                <td>{{ stud.name }}</td>
+                <td>{{ stud.father_name }}</td>
+                <td>{{ stud.grade_level }}</td>
+                <td>{{ stud.phone_number }}</td>
+                <td><a href="{{ url_for('edit_student', student_id=stud.id) }}">Edit</a></td>
+                <td><form id="delete-form-{{ stud.id }}" action="{{ url_for('delete_student', student_id=stud.id) }}" method="post">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
